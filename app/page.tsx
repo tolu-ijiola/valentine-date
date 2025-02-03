@@ -6,6 +6,7 @@ import lottie from "lottie-web"; // Update import
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import dynamic from "next/dynamic";
 
+
 const slides = [
   {
     image: "/2.svg",
@@ -60,31 +61,22 @@ export default function Home() {
   const drumContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    // Make sure we're in the browser and the ref exists
+    if (typeof window === 'undefined' || !loveContainer.current) return;
 
-    let anim: any = null;
+    const anim = lottie.loadAnimation({
+      container: loveContainer.current,
+      renderer: "svg",
+      loop: true,
+      autoplay: true,
+      path: "/anim/love.json",
+      rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice",
+      },
+    });
 
-    if (loveContainer.current) {
-      anim = lottie.loadAnimation({
-        container: loveContainer.current,
-        renderer: "svg",
-        loop: true,
-        autoplay: true,
-        path: "/anim/love.json",
-        rendererSettings: {
-          preserveAspectRatio: "xMidYMid slice",
-        },
-      });
-    }
-
-    // Cleanup function
-    return () => {
-      if (anim) {
-        anim.destroy();
-      }
-    };
-  }
-  }, [current]); // Re-run when step changes
+    return () => anim.destroy();
+  }, [current]);
 
   const [status, setStatus] = useState<'initial' | 'yes' | 'no'>('initial');
   const [explosions, setExplosions] = useState<Explosion[]>([]);
@@ -118,31 +110,22 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    // Make sure we're in the browser and the ref exists
+    if (typeof window === 'undefined' || !drumContainer.current) return;
 
-    let anim: any = null;
+    const anim = lottie.loadAnimation({
+      container: drumContainer.current,
+      renderer: "svg",
+      loop: true,
+      autoplay: true,
+      path: "/anim/drumroll.json",
+      rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice",
+      },
+    });
 
-    if (drumContainer.current) {
-      anim = lottie.loadAnimation({
-        container: drumContainer.current,
-        renderer: "svg",
-        loop: true,
-        autoplay: true,
-        path: "/anim/drumroll.json",
-        rendererSettings: {
-          preserveAspectRatio: "xMidYMid slice",
-        },
-      });
-    }
-
-    // Cleanup function
-    return () => {
-      if (anim) {
-        anim.destroy();
-      }
-    };
-  }
-  }, [current]); // Re-run when step changes
+    return () => anim.destroy();
+  }, [current]);
 
   const explosionVariants: Variants = {
     hidden: { scale: 0, opacity: 0 },
