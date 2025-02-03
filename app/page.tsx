@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import lottie from "lottie-web"; // Update import
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import dynamic from "next/dynamic";
 
@@ -61,21 +60,22 @@ export default function Home() {
   const drumContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Make sure we're in the browser and the ref exists
-    if (typeof window === 'undefined' || !loveContainer.current) return;
-
-    const anim = lottie.loadAnimation({
-      container: loveContainer.current,
-      renderer: "svg",
-      loop: true,
-      autoplay: true,
-      path: "/anim/love.json",
-      rendererSettings: {
-        preserveAspectRatio: "xMidYMid slice",
-      },
-    });
-
-    return () => anim.destroy();
+    async function loadLottie() {
+      if (typeof window === 'undefined' || !loveContainer.current) return;
+      const lottie = (await import('lottie-web')).default;
+      const anim = lottie.loadAnimation({
+        container: loveContainer.current,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: "/anim/love.json",
+        rendererSettings: {
+          preserveAspectRatio: "xMidYMid slice",
+        },
+      });
+      return () => anim.destroy();
+    }
+    loadLottie();
   }, [current]);
 
   const [status, setStatus] = useState<'initial' | 'yes' | 'no'>('initial');
@@ -110,21 +110,22 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Make sure we're in the browser and the ref exists
-    if (typeof window === 'undefined' || !drumContainer.current) return;
-
-    const anim = lottie.loadAnimation({
-      container: drumContainer.current,
-      renderer: "svg",
-      loop: true,
-      autoplay: true,
-      path: "/anim/drumroll.json",
-      rendererSettings: {
-        preserveAspectRatio: "xMidYMid slice",
-      },
-    });
-
-    return () => anim.destroy();
+    async function loadLottie() {
+      if (typeof window === 'undefined' || !drumContainer.current) return;
+      const lottie = (await import('lottie-web')).default;
+      const anim = lottie.loadAnimation({
+        container: drumContainer.current,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: "/anim/drumroll.json",
+        rendererSettings: {
+          preserveAspectRatio: "xMidYMid slice",
+        },
+      });
+      return () => anim.destroy();
+    }
+    loadLottie();
   }, [current]);
 
   const explosionVariants: Variants = {
