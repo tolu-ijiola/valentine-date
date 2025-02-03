@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import lottie from "lottie-web"; // Update import
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 const slides = [
   {
@@ -135,7 +135,7 @@ export default function Home() {
     };
   }, [current]); // Re-run when step changes
 
-  const explosionVariants = {
+  const explosionVariants: Variants = {
     hidden: { scale: 0, opacity: 0 },
     visible: { 
       scale: [0, 2, 1.5],
@@ -160,7 +160,7 @@ export default function Home() {
     }
   };
 
-  const ribbonVariants = {
+  const ribbonVariants: Variants = {
     initial: { y: -100, opacity: 1 },
     animate: (i: number) => ({
       y: typeof window !== 'undefined' ? window.innerHeight : 1000,
