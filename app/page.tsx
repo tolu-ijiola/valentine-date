@@ -1,8 +1,10 @@
 "use client";
+
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import lottie from "lottie-web"; // Update import
 import { motion, AnimatePresence, Variants } from 'framer-motion';
+import dynamic from "next/dynamic";
 
 const slides = [
   {
@@ -27,7 +29,7 @@ const slides = [
       "I'm so grateful for you, and I love how we make life feel so much better together.",
   },
   {
-    image: "/drumroll.json",
+    image: "",
     title: "The Big Question",
     description: "",
   },
@@ -47,6 +49,7 @@ interface Explosion {
 }
 
 export default function Home() {
+  
   const [current, setCurrent] = useState(0);
 
   const nextSlide = () => {
@@ -217,7 +220,7 @@ export default function Home() {
       ))}
       {current <= 4 && (
         <div className=" w-full max-w-sm space-y-2 bg-white mx-auto shadow-md rounded-md p-8">
-          {current === 0 && (
+          {current === 0 && loveContainer !== null && (
             <div
               ref={loveContainer}
               className="mx-auto z-50"
