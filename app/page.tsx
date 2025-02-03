@@ -57,6 +57,8 @@ export default function Home() {
   const drumContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+
     let anim: any = null;
 
     if (loveContainer.current) {
@@ -78,6 +80,7 @@ export default function Home() {
         anim.destroy();
       }
     };
+  }
   }, [current]); // Re-run when step changes
 
   const [status, setStatus] = useState<'initial' | 'yes' | 'no'>('initial');
@@ -112,6 +115,8 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+
     let anim: any = null;
 
     if (drumContainer.current) {
@@ -133,6 +138,7 @@ export default function Home() {
         anim.destroy();
       }
     };
+  }
   }, [current]); // Re-run when step changes
 
   const explosionVariants: Variants = {
