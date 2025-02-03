@@ -1,101 +1,307 @@
+"use client";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import lottie from "lottie-web"; // Update import
+import { motion, AnimatePresence } from 'framer-motion';
+
+const slides = [
+  {
+    image: "/2.svg",
+    title: "Hi Prettyyyyyyyyy!!!",
+    description: "",
+  },
+  {
+    image: "/1.svg",
+    title: "",
+    description: "We've shared so many beautiful moments together.",
+  },
+  {
+    image: "/2.svg",
+    title: "",
+    description: "Every day with you feels like a special celebration.",
+  },
+  {
+    image: "/3.svg",
+    title: "",
+    description:
+      "I'm so grateful for you, and I love how we make life feel so much better together.",
+  },
+  {
+    image: "/drumroll.json",
+    title: "The Big Question",
+    description: "",
+  },
+];
+
+interface Ribbon {
+  id: number;
+  left: string;
+  delay: string;
+  color: string;
+}
+
+interface Explosion {
+  id: number;
+  left: string;
+  top: string;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [current, setCurrent] = useState(0);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const nextSlide = () => {
+    setCurrent((prev) => (prev + 1));
+  };
+
+  const loveContainer = useRef<HTMLDivElement>(null);
+  const drumContainer = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let anim: any = null;
+
+    if (loveContainer.current) {
+      anim = lottie.loadAnimation({
+        container: loveContainer.current,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: "/anim/love.json",
+        rendererSettings: {
+          preserveAspectRatio: "xMidYMid slice",
+        },
+      });
+    }
+
+    // Cleanup function
+    return () => {
+      if (anim) {
+        anim.destroy();
+      }
+    };
+  }, [current]); // Re-run when step changes
+
+  const [status, setStatus] = useState<'initial' | 'yes' | 'no'>('initial');
+  const [explosions, setExplosions] = useState<Explosion[]>([]);
+  const [ribbons, setRibbons] = useState<Ribbon[]>([]);
+
+  const createRibbons = (): Ribbon[] => {
+    return Array.from({ length: 50 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 2}s`,
+      color: ['#FF6B6B', '#4ECDC4', '#FF9FF3', '#A55EEA'][Math.floor(Math.random() * 4)]
+    }));
+  };
+  const createExplosions = () => {
+    return Array.from({ length: 5 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 80}%`,
+      top: `${Math.random() * 80}%`
+    }));
+  };
+
+  const handleYes = () => {
+    setStatus("yes");
+    setRibbons(createRibbons());
+
+  };
+
+  const handleNo = () => {
+    setStatus('no');
+    setExplosions(createExplosions());
+  };
+
+  useEffect(() => {
+    let anim: any = null;
+
+    if (drumContainer.current) {
+      anim = lottie.loadAnimation({
+        container: drumContainer.current,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: "/anim/drumroll.json",
+        rendererSettings: {
+          preserveAspectRatio: "xMidYMid slice",
+        },
+      });
+    }
+
+    // Cleanup function
+    return () => {
+      if (anim) {
+        anim.destroy();
+      }
+    };
+  }, [current]); // Re-run when step changes
+
+  const explosionVariants = {
+    hidden: { scale: 0, opacity: 0 },
+    visible: { 
+      scale: [0, 2, 1.5],
+      opacity: [0, 1, 0],
+      transition: { 
+        duration: 0.5,
+        times: [0, 0.5, 1],
+        repeat: Infinity,
+        repeatType: 'loop'
+      }
+    }
+  };
+
+  const shakeVariants = {
+    initial: { x: 0 },
+    animate: {
+      x: [-10, 10, -5, 5, 0],
+      transition: {
+        duration: 0.3,
+        repeat: 300000
+      }
+    }
+  };
+
+  const ribbonVariants = {
+    initial: { y: -100, opacity: 1 },
+    animate: (i: number) => ({
+      y: typeof window !== 'undefined' ? window.innerHeight : 1000,
+      rotate: Math.random() * 360,
+      transition: {
+        duration: 3,
+        delay: i * 0.1,
+        repeat: Infinity,
+        repeatType: 'loop'
+      }
+    })
+  };
+
+  return (
+    <motion.div 
+      variants={status === 'no' ? shakeVariants : {}}
+      animate={status === 'no' ? 'animate' : 'initial'}
+    >
+    <div className="flex flex-col max-h-screen items-center justify-center h-screen bg-pink-50 p-4 overflow-hidden">
+    {ribbons.map((ribbon, i) => (
+        <motion.div 
+          key={ribbon.id}
+          className="absolute w-2 h-20 top-0"
+          style={{ 
+            left: ribbon.left, 
+            backgroundColor: ribbon.color 
+          }}
+          variants={ribbonVariants}
+          initial="initial"
+          animate="animate"
+          custom={i}
+        />
+      ))}
+        {status === 'no' && explosions.map((explosion) => (
+        <motion.div 
+          key={explosion.id}
+          className="absolute text-8xl"
+          style={{
+            left: explosion.left,
+            top: explosion.top
+          }}
+          variants={explosionVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          💥
+        </motion.div>
+      ))}
+      {current <= 4 && (
+        <div className=" w-full max-w-sm space-y-2 bg-white mx-auto shadow-md rounded-md p-8">
+          {current === 0 && (
+            <div
+              ref={loveContainer}
+              className="mx-auto z-50"
+              style={{
+                width: "200px",
+                height: "200px",
+                overflow: "hidden", // Add this
+              }}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          )}
+          {current === 4 && (
+            <div
+              ref={drumContainer}
+              className="mx-auto z-50"
+              style={{
+                width: "200px",
+                height: "200px",
+                overflow: "hidden", // Add this
+              }}
+            />
+          )}
+          {current !== 0 && current !== 4 && (
+            <Image
+              src={slides[current].image}
+              alt={slides[current].title}
+              objectFit="contain"
+              quality={100}
+              width={1000}
+              height={1000}
+              priority
+              className="z-0 object-contain h-32"
+            />
+          )}
+          <div className=" py-4">
+            <h2 className=" text-3xl text-center font-semibold">
+              {slides[current].title}
+            </h2>
+            <p className="text-gray-600 mt-2 text-center">
+              {slides[current].description}
+            </p>
+          </div>
+          <button
+            onClick={nextSlide}
+            className=" mx-auto w-[180px] p-4 mt-8 block text-xs bg-pink-400 text-white rounded-lg rounded-b-2xl "
           >
-            Read our docs
-          </a>
+            Continue
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
+      {current === 5 && status === "initial" && (
+        <div className=" w-full max-w-sm space-y-2 bg-white mx-auto shadow-md rounded-md p-8">
+          <h2 className=" text-2xl py-8 text-center font-semibold">
+            Would you be my valentine?
+          </h2>
+          <button
+          onClick={handleYes}
+            className=" mx-auto w-[180px] p-4 mt-8 block text-xs bg-pink-400 text-white rounded-lg rounded-b-2xl "
+          >
+            Yes💖
+          </button>
+          <button
+            onClick={handleNo}
+            className=" mx-auto block text-xs p-2 bg-red-400 text-white rounded-lg rounded-b-2xl "
+          >
+            No💔
+          </button>
+        </div>
+      )}
+      {current === 5 && status === "yes" && (
+        <div className=" w-full max-w-sm space-y-2 bg-white mx-auto shadow-md rounded-md p-8">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-pink-900 text-center text-2xl font-bold"
+          >
+          Yay! You've made me the happiest person on earth! 💖😉🍭
+          </motion.div>
+        </div>
+      )}
+      {current === 5 && status === "no" && (
+        <div className=" w-full max-w-sm space-y-2 bg-white mx-auto shadow-md rounded-md p-8">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0.5 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="text-red-600 text-2xl font-bold"
+          >HOW DARE YOU REJECT MY LOVE! 💔🔥😠
+          </motion.div>
+        </div>
+      )}
     </div>
+    </motion.div>
   );
 }
